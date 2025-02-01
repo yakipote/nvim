@@ -8,7 +8,4 @@ return {
       ["@boolean"] = { link = "Special" },
     },
   },
-  init = function()
-    vim.cmd.colorscheme("evangelion")
-  end,
 }
