@@ -1,8 +1,9 @@
 return {
+  { "xiyaowong/transparent.nvim" },
   {
     "LazyVim/LazyVim",
     opts = {
-      -- colorscheme = "vim",
+      colorscheme = "tokyonight",
     },
   },
 }
