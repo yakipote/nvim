@@ -111,6 +111,13 @@ return {
           timeout = 3000,
           -- 通知のレベル
           level = "info",
+          -- 通知のスタイル
+          on_open = function(win)
+            -- 通知ウィンドウのオプションを設定
+            vim.api.nvim_win_set_option(win, "winblend", 0)  -- 透明度なし
+            -- ウィンドウの背景色を設定
+            vim.api.nvim_win_set_option(win, "winhighlight", "Normal:NormalFloat,FloatBorder:FloatBorder")
+          end,
         },
         -- NERV風のメッセージスタイル
         messages = {
@@ -179,6 +186,25 @@ return {
       vim.api.nvim_set_hl(0, "NoiceCmdlinePopupTitle", { fg = nerv_colors.nerv_yellow, bg = nerv_colors.black, bold = true })
       vim.api.nvim_set_hl(0, "NoiceCmdlineIcon", { fg = nerv_colors.nerv_green, bg = nerv_colors.black })
       vim.api.nvim_set_hl(0, "NoiceConfirmBorder", { fg = nerv_colors.nerv_blue, bg = nerv_colors.black })
+      
+      -- 通知の文字色を明るく設定して見やすくする
+      vim.api.nvim_set_hl(0, "NotifyERRORBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NotifyWARNBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NotifyINFOBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NotifyDEBUGBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NotifyTRACEBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
+      
+      -- Noiceの通知本文のハイライトも設定
+      vim.api.nvim_set_hl(0, "NoicePopupmenuMatch", { fg = nerv_colors.nerv_orange, bold = true })
+      vim.api.nvim_set_hl(0, "NoicePopupmenuSelected", { bg = nerv_colors.bg, fg = nerv_colors.nerv_yellow, bold = true })
+      vim.api.nvim_set_hl(0, "NoiceLspProgressTitle", { fg = nerv_colors.nerv_blue, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NoiceLspProgressClient", { fg = nerv_colors.nerv_green, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NoiceLspProgressSpinner", { fg = nerv_colors.nerv_orange, bg = nerv_colors.black })
+      
+      -- 通知のテキスト色を設定
+      vim.api.nvim_set_hl(0, "NoiceText", { fg = nerv_colors.fg, bg = "NONE" })
+      vim.api.nvim_set_hl(0, "NoicePopupMenu", { fg = nerv_colors.fg, bg = nerv_colors.black })
+      vim.api.nvim_set_hl(0, "NoicePopupMenuSelected", { fg = nerv_colors.nerv_yellow, bg = nerv_colors.bg, bold = true })
     end, 100)
   end,
 }
