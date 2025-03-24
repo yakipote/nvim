@@ -51,12 +51,18 @@ return {
             col = "50%",
           },
           size = {
-            width = 60,
+            -- コマンドラインをより大きく
+            width = 100,
             height = "auto",
           },
           border = {
-            style = "single",
-            padding = { 0, 1 },
+            -- 二重線のボーダー
+            style = "double",
+            padding = { 1, 2 },
+            text = {
+              top = " NERV COMMAND INTERFACE ",
+              top_align = "center",
+            },
           },
           win_options = {
             winhighlight = {
@@ -70,24 +76,35 @@ return {
             text = function()
               local id = string.format("NERV-%05d", math.random(1, 99999))
               local time = os.date("%H:%M:%S")
-              return string.format(" %s | TIME: %s ", id, time)
+              return string.format(" %s | TIME: %s | MAGI SYSTEM ONLINE ", id, time)
             end,
             pos = "center",
+          },
+          -- コマンドラインの装飾
+          zindex = 200,
+          relative = "editor",
+          -- 入力前のプレフィックス
+          buf_options = {
+            filetype = "nervcmd",
           },
         },
         popupmenu = {
           relative = "editor",
           position = {
-            row = 8,
+            row = 12,
             col = "50%",
           },
           size = {
-            width = 60,
-            height = 10,
+            width = 100,
+            height = 15,
           },
           border = {
             style = "single",
-            padding = { 0, 1 },
+            padding = { 1, 2 },
+            text = {
+              top = " NERV OPTIONS ",
+              top_align = "center",
+            },
           },
           win_options = {
             winhighlight = {
@@ -95,7 +112,14 @@ return {
               FloatBorder = "FloatBorder",
               CursorLine = "PmenuSel",
             },
+            cursorline = true,
+            cursorlineopt = "both",
           },
+          -- 選択項目の装飾
+          entry_formatter = function(menu_item)
+            local nerv_id = string.format("NERV-%03d", math.random(1, 999))
+            return string.format("[%s] %s", nerv_id, menu_item.text)
+          end,
         },
         -- NERV風の通知スタイル
         notify = {
@@ -136,11 +160,26 @@ return {
           opts = {
             title = "NERV-LSP",
             border = {
-              style = "single",
-              padding = { 0, 1 },
+              style = "double",
+              padding = { 1, 2 },
               text = {
-                top = " NERV SYSTEM ",
+                top = " NERV MAGI SYSTEM ",
                 top_align = "center",
+              },
+            },
+            position = {
+              row = 2,
+              col = "100%",
+            },
+            size = {
+              width = "auto",
+              height = "auto",
+            },
+            win_options = {
+              winblend = 0,
+              winhighlight = {
+                Normal = "NormalFloat",
+                FloatBorder = "FloatBorder",
               },
             },
           },
@@ -151,13 +190,33 @@ return {
           opts = {
             title = "NERV-CMD",
             border = {
-              style = "single",
-              padding = { 0, 1 },
+              style = "double",
+              padding = { 1, 2 },
               text = {
                 top = " COMMAND OUTPUT ",
                 top_align = "center",
               },
             },
+            position = {
+              row = -2,
+              col = "50%",
+            },
+            size = {
+              width = 100,
+              height = "auto",
+            },
+            win_options = {
+              winblend = 0,
+              winhighlight = {
+                Normal = "NormalFloat",
+                FloatBorder = "FloatBorder",
+              },
+            },
+            format = function(message)
+              local nerv_id = string.format("NERV-%05d", math.random(1, 99999))
+              local time = os.date("%H:%M:%S")
+              return string.format("[%s | %s] %s", nerv_id, time, message)
+            end,
           },
         },
       },
@@ -167,13 +226,55 @@ return {
         progress = {
           title = function(client_name)
             local id = string.format("NERV-%05d", math.random(1, 99999))
-            return string.format("[%s] %s", id, client_name)
+            local time = os.date("%H:%M:%S")
+            return string.format("[%s | %s] %s", id, time, client_name:upper())
           end,
           message = function(progress)
             if progress.message then
-              return progress.message
+              return string.format("STATUS: %s", progress.message:upper())
             end
-            return "PROCESSING..."
+            return "STATUS: PROCESSING..."
+          end,
+          -- 進捗状況のフォーマット
+          format = function(message, title)
+            local separator = string.rep("─", 50)
+            return string.format("%s\n%s\n%s", title, separator, message)
+          end,
+          -- 進捗状況のアイコン
+          spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
+        },
+        -- コマンドラインのフォーマット
+        cmdline = {
+          pattern = "^:",
+          icon = "▶",
+          lang = "vim",
+          title = "Command",
+          format = function(content)
+            local time = os.date("%H:%M:%S")
+            return string.format("[TIME: %s] %s", time, content)
+          end,
+        },
+        -- 検索のフォーマット
+        search_down = {
+          view = "cmdline",
+          pattern = "^/",
+          icon = "🔍",
+          lang = "regex",
+          title = "Search",
+          format = function(content)
+            local nerv_id = string.format("NERV-%03d", math.random(1, 999))
+            return string.format("[%s] SEARCH: %s", nerv_id, content)
+          end,
+        },
+        search_up = {
+          view = "cmdline",
+          pattern = "^%?",
+          icon = "🔍",
+          lang = "regex",
+          title = "Search",
+          format = function(content)
+            local nerv_id = string.format("NERV-%03d", math.random(1, 999))
+            return string.format("[%s] REVERSE SEARCH: %s", nerv_id, content)
           end,
         },
       },

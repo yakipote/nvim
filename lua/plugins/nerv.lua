@@ -10,18 +10,85 @@ return {
     "rcarriga/nvim-notify",
     lazy = false,
     config = function()
+      -- NERV風のカスタム通知レンダラーを定義
+      local nerv_renderer = function(bufnr, notif, highlights, config)
+        local namespace = vim.api.nvim_create_namespace("nerv_notify")
+        local icon = config.icons[notif.level] or "■"
+        local nerv_id = string.format("NERV-%05d", math.random(1, 99999))
+        local timestamp = os.date("%H:%M:%S")
+        
+        -- 通知の幅を計算（より大きく）
+        local width = math.min(120, vim.o.columns)
+        
+        -- タイトル行
+        local title = notif.title or "NERV SYSTEM"
+        local title_line = string.format(" %s %s | %s ", icon, nerv_id, title:upper())
+        vim.api.nvim_buf_set_lines(bufnr, 0, 1, false, { title_line })
+        
+        -- タイトルのハイライト
+        local title_hl = highlights.title[notif.level]
+        vim.api.nvim_buf_add_highlight(bufnr, namespace, title_hl, 0, 0, -1)
+        
+        -- 上部区切り線（二重線）
+        local separator = string.rep("═", width - 2)
+        vim.api.nvim_buf_set_lines(bufnr, 1, 2, false, { separator })
+        vim.api.nvim_buf_add_highlight(bufnr, namespace, title_hl, 1, 0, -1)
+        
+        -- ステータス行
+        local status_line = string.format(" STATUS: ACTIVE | TIME: %s | LEVEL: %s ", timestamp, notif.level)
+        vim.api.nvim_buf_set_lines(bufnr, 2, 3, false, { status_line })
+        vim.api.nvim_buf_add_highlight(bufnr, namespace, title_hl, 2, 0, -1)
+        
+        -- 中間区切り線（シングル）
+        local mid_separator = string.rep("─", width - 2)
+        vim.api.nvim_buf_set_lines(bufnr, 3, 4, false, { mid_separator })
+        vim.api.nvim_buf_add_highlight(bufnr, namespace, title_hl, 3, 0, -1)
+        
+        -- メッセージ本文
+        local body_start_line = 4
+        if notif.message then
+          local message_lines = {}
+          for i, line in ipairs(notif.message) do
+            table.insert(message_lines, " " .. line .. " ")
+          end
+          
+          -- 空行を追加して余白を作る
+          table.insert(message_lines, 1, "")
+          table.insert(message_lines, "")
+          
+          vim.api.nvim_buf_set_lines(bufnr, body_start_line, body_start_line + #message_lines, false, message_lines)
+          
+          -- 本文のハイライト
+          local body_hl = highlights.body[notif.level]
+          for i = 0, #message_lines - 1 do
+            vim.api.nvim_buf_add_highlight(bufnr, namespace, body_hl, body_start_line + i, 0, -1)
+          end
+          
+          body_start_line = body_start_line + #message_lines
+        end
+        
+        -- 下部区切り線（二重線）
+        vim.api.nvim_buf_set_lines(bufnr, body_start_line, body_start_line + 1, false, { separator })
+        vim.api.nvim_buf_add_highlight(bufnr, namespace, title_hl, body_start_line, 0, -1)
+        
+        -- フッター行
+        local footer_line = " NERV CENTRAL DOGMA | TERMINAL ACCESS GRANTED "
+        vim.api.nvim_buf_set_lines(bufnr, body_start_line + 1, body_start_line + 2, false, { footer_line })
+        vim.api.nvim_buf_add_highlight(bufnr, namespace, title_hl, body_start_line + 1, 0, -1)
+      end
+      
       -- NERV-themeの設定に加えて、追加の設定を行う
       require("notify").setup({
         -- 背景色を黒に設定
         background_colour = "#000000",
         -- 通知の表示時間
-        timeout = 3000,
-        -- 通知の最大幅
-        max_width = 80,
-        -- 通知の最大高さ
-        max_height = 20,
+        timeout = 5000,
+        -- 通知の最大幅（大きく設定）
+        max_width = 120,
+        -- 通知の最大高さ（大きく設定）
+        max_height = 40,
         -- 通知のレンダリングスタイル
-        render = "default",
+        render = nerv_renderer,
         -- 通知のスタイル
         stages = "static",
         -- 通知のアイコン
@@ -44,6 +111,10 @@ return {
         },
         -- 通知の表示位置
         top_down = true,
+        -- 通知の余白
+        padding = 2,
+        -- 通知の間隔
+        spacing = 3,
       })
       
       -- 通知のハイライトグループを設定
@@ -61,7 +132,25 @@ return {
         vim.api.nvim_set_hl(0, "NotifyINFOTitle", { fg = "#00ff66", bg = "#000000", bold = true })
         vim.api.nvim_set_hl(0, "NotifyDEBUGTitle", { fg = "#3399ff", bg = "#000000", bold = true })
         vim.api.nvim_set_hl(0, "NotifyTRACETitle", { fg = "#9933ff", bg = "#000000", bold = true })
+        
+        -- ボーダーの色も設定
+        vim.api.nvim_set_hl(0, "NotifyERRORBorder", { fg = "#ff3333", bg = "#000000" })
+        vim.api.nvim_set_hl(0, "NotifyWARNBorder", { fg = "#ffcc33", bg = "#000000" })
+        vim.api.nvim_set_hl(0, "NotifyINFOBorder", { fg = "#00ff66", bg = "#000000" })
+        vim.api.nvim_set_hl(0, "NotifyDEBUGBorder", { fg = "#3399ff", bg = "#000000" })
+        vim.api.nvim_set_hl(0, "NotifyTRACEBorder", { fg = "#9933ff", bg = "#000000" })
       end, 100)
+      
+      -- テスト通知を表示する関数を定義（デバッグ用）
+      _G.show_nerv_test_notification = function()
+        vim.notify("エヴァンゲリオン初号機、起動準備完了\nシンクロ率 41.3%\n\n第3新東京市、現在時刻 " .. os.date("%H:%M:%S"), 
+          vim.log.levels.INFO, 
+          { title = "NERV本部" })
+      end
+      
+      -- キーマップを設定（オプション）
+      vim.keymap.set("n", "<Leader>nt", function() _G.show_nerv_test_notification() end, 
+        { desc = "NERV風テスト通知を表示" })
     end,
   },
 }
