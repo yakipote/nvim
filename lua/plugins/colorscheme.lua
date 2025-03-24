@@ -3,7 +3,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "tokyonight",
+      colorscheme = "nerv", -- NERV-themeをデフォルトのカラースキームに設定
     },
   },
 }
