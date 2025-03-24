@@ -5,7 +5,8 @@ return {
     priority = 1000,
     opts = {},
   },
-  -- nvim-notify
+  -- nvim-notify - メインの通知プラグイン設定
+  -- このプラグインはnoice.nvimの依存関係としても使用されますが、設定はここで一元管理します
   {
     "rcarriga/nvim-notify",
     lazy = false,
