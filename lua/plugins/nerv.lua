@@ -48,8 +48,23 @@ return {
         local body_start_line = 4
         if notif.message then
           local message_lines = {}
-          for i, line in ipairs(notif.message) do
-            table.insert(message_lines, " " .. line .. " ")
+          
+          -- メッセージが文字列の場合は配列に変換
+          if type(notif.message) == "string" then
+            -- 改行で分割
+            for line in string.gmatch(notif.message, "[^\r\n]+") do
+              table.insert(message_lines, line)
+            end
+          else
+            -- 既に配列の場合はそのまま使用
+            for i, line in ipairs(notif.message) do
+              table.insert(message_lines, line)
+            end
+          end
+          
+          -- 各行の前後に余白を追加
+          for i, line in ipairs(message_lines) do
+            message_lines[i] = " " .. line .. " "
           end
           
           -- 空行を追加して余白を作る
