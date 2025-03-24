@@ -11,7 +11,7 @@ return {
     -- OPTIONAL:
     --   `nvim-notify` is only needed, if you want to use the notification view.
     --   If not available, we use `mini` as the fallback
-    -- 注意: nvim-notifyの設定は lua/plugins/nerv.lua で一元管理されています
+    -- 注意: nvim-notifyの設定は lua/plugins/notify.lua で一元管理されています
     "rcarriga/nvim-notify",
   },
   config = function()
@@ -281,7 +281,7 @@ return {
       },
     })
 
-    -- NERV風のハイライトグループを設定（nvim-notifyの設定は nerv.lua で行う）
+    -- NERV風のハイライトグループを設定（nvim-notifyの設定は notify.lua で行う）
     vim.defer_fn(function()
       -- noice.nvimのハイライトグループをNERV風に設定
       vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { fg = nerv_colors.nerv_orange, bg = nerv_colors.black })
