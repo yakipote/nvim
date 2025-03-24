@@ -11,6 +11,7 @@ return {
     -- OPTIONAL:
     --   `nvim-notify` is only needed, if you want to use the notification view.
     --   If not available, we use `mini` as the fallback
+    -- 注意: nvim-notifyの設定は lua/plugins/nerv.lua で一元管理されています
     "rcarriga/nvim-notify",
   },
   config = function()
@@ -280,7 +281,7 @@ return {
       },
     })
 
-    -- nvim-notifyの設定を上書きしないように、NERV-themeの設定後に実行
+    -- NERV風のハイライトグループを設定（nvim-notifyの設定は nerv.lua で行う）
     vim.defer_fn(function()
       -- noice.nvimのハイライトグループをNERV風に設定
       vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorder", { fg = nerv_colors.nerv_orange, bg = nerv_colors.black })
@@ -288,14 +289,7 @@ return {
       vim.api.nvim_set_hl(0, "NoiceCmdlineIcon", { fg = nerv_colors.nerv_green, bg = nerv_colors.black })
       vim.api.nvim_set_hl(0, "NoiceConfirmBorder", { fg = nerv_colors.nerv_blue, bg = nerv_colors.black })
       
-      -- 通知の文字色を明るく設定して見やすくする
-      vim.api.nvim_set_hl(0, "NotifyERRORBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
-      vim.api.nvim_set_hl(0, "NotifyWARNBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
-      vim.api.nvim_set_hl(0, "NotifyINFOBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
-      vim.api.nvim_set_hl(0, "NotifyDEBUGBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
-      vim.api.nvim_set_hl(0, "NotifyTRACEBody", { fg = nerv_colors.fg, bg = nerv_colors.black })
-      
-      -- Noiceの通知本文のハイライトも設定
+      -- Noiceの通知本文のハイライトを設定
       vim.api.nvim_set_hl(0, "NoicePopupmenuMatch", { fg = nerv_colors.nerv_orange, bold = true })
       vim.api.nvim_set_hl(0, "NoicePopupmenuSelected", { bg = nerv_colors.bg, fg = nerv_colors.nerv_yellow, bold = true })
       vim.api.nvim_set_hl(0, "NoiceLspProgressTitle", { fg = nerv_colors.nerv_blue, bg = nerv_colors.black })
